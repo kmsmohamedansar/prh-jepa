@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you reference this study, please cite the technical report."
 type: generic
-title: "My Take on the Platonic Representation Hypothesis: Do JEPAs converge faster?"
+title: "My Take on PRH-JEPA: An independent check of 'Proving and Improving the Platonic Representation Hypothesis with JEPAs'"
 authors:
   - given-names: Mohamed
     family-names: Ansar
-url: "https://ansarbuilds.dev/p/prh-jepa/report.html"
-repository-code: "https://github.com/kmsmohamedansar/prh-jepa"
+url: "https://ansarbuilds.dev/p/prh-study/report.html"
+repository-code: "https://github.com/kmsmohamedansar/prh-study"

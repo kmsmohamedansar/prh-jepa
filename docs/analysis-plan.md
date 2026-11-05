@@ -2,9 +2,8 @@
 
 Freeze this file, with a dated commit, before the first scored run. Changes after that go in NOTES.md with the reason.
 
-1. **Primary measure:** mutual k-NN alignment, k = 10, 1,000 held-out pairs.
-2. **Secondary:** linear CKA; mutual k-NN at k = 5, 20, 50.
-3. **Uncertainty:** 1,000 bootstrap resamples of the pairs; 95% intervals.
-4. **Baseline:** the same measure with captions shuffled against images, reported for every encoder.
-5. **Claim allowed if:** I-JEPA's interval lies above both MAE's and DINOv2's on the primary measure, held-out.
-6. **Claims never made:** that the PRH is proved; that the objective is the cause, as opposed to data or compute differences.
+1. **Their repo:** pinned commit; tests run unchanged; failures recorded, not fixed silently.
+2. **Measure:** mutual 10-NN as in the PRH paper, computed by both my code and theirs.
+3. **Baselines (phase 2):** WIT-1024, DINOv2-B, each language model's features taken the way the PRH paper does. A baseline counts as reproduced if my number is within 0.01 of theirs.
+4. **Good against bad views (phase 3):** same encoder, data, samples and seed list; only the view type changes. Bootstrap 95% intervals over the evaluation pairs.
+5. **Claims never made:** that the paper is wrong because a small run fails; that it is right beyond what was checked.
