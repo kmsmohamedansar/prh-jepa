@@ -11,12 +11,15 @@ The only checks so far come from the authors. This study asks, on one Mac with n
 3. Do their language-model baselines come out the same when measured independently, on the PRH benchmark (WIT-1024)?
 4. At a scale a laptop can train, do good views beat bad views (masked or cropped copies of one input) as the paper predicts?
 
-**Status (2026-11-05):** scaffold only. Nothing measured. The analysis plan is a draft and is not frozen.
+**Status (2026-11-05):** parked. Scaffold only, nothing measured, the analysis plan is a draft and not frozen. See "Picking this up again" in `NOTES.md`.
+
+New to the paper? Start with `docs/explainer.html`, a plain-words, illustrated explanation (open it in a browser).
 
 ## Read this first
 
 | File | What it is |
 |---|---|
+| `docs/explainer.html` | The paper explained simply, with drawings |
 | `HANDOFF.md` | The plan: which claims, how each is checked, what would count as a result |
 | `docs/analysis-plan.md` | What will be reported and claimed, frozen before the first scored run |
 | `paper/claims.md` | Every claim, the number behind it, where it comes from, how it was checked |

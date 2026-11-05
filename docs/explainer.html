@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two Minds, One Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: a picture book. One narrow reading column, each page of the story is a spread of words and a drawing. */
+:root{
+  --paper:#eef2f6; --card:#ffffff; --ink:#1d2a3a; --soft:#566477; --line:#c9d3de;
+  --pic:#e0742f;   /* the picture side */
+  --word:#1f8f86;  /* the words side */
+  --world:#6a55c9; /* the real world */
+  --good:#2f8f4e; --bad:#c2453b;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121a24; --card:#1b2533; --ink:#e7edf4; --soft:#a3b0c0; --line:#33415a;
+  --pic:#f2955a; --word:#4cc2b7; --world:#9f8ef0; --good:#5cc27c; --bad:#f07a6f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121a24; --card:#1b2533; --ink:#e7edf4; --soft:#a3b0c0; --line:#33415a;
+  --pic:#f2955a; --word:#4cc2b7; --world:#9f8ef0; --good:#5cc27c; --bad:#f07a6f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 1.08rem/1.65 var(--body);
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));padding-block:0 64px}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--display);text-wrap:balance;line-height:1.1;margin:0}
+h1{font-size:clamp(2.3rem,7vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,4.2vw,2rem);font-weight:700}
+p{margin:0;max-width:65ch}
+.pic{color:var(--pic);font-weight:700}.word{color:var(--word);font-weight:700}.world{color:var(--world);font-weight:700}
+header{padding-top:56px;display:flex;flex-direction:column;gap:18px}
+.kicker{font:700 .78rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.lede{font-size:1.2rem}
+section{display:flex;flex-direction:column;gap:16px}
+.chapter{font:700 .8rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--world)}
+figure{margin:8px 0 0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:.92rem;color:var(--soft)}
+svg text{font-family:var(--body);fill:var(--ink)}
+svg .t-soft{fill:var(--soft)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+.box{border-radius:14px;padding:14px 16px;border:2px solid var(--line);display:flex;flex-direction:column;gap:6px;min-width:0}
+.box b{font-family:var(--display);font-size:1.1rem}
+.box.goodb{border-color:var(--good)} .box.goodb b{color:var(--good)}
+.box.badb{border-color:var(--bad)} .box.badb b{color:var(--bad)}
+.quote{font-style:italic;background:var(--paper);border-radius:8px;padding:6px 10px}
+.blank{display:inline-block;min-width:3.2em;border-bottom:2px solid var(--bad);text-align:center;font-style:normal;color:var(--bad)}
+.slider{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.slider label{font-weight:700}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--world)}
+input[type=range]:focus-visible{outline:3px solid var(--world);outline-offset:4px}
+#status{font-weight:700;min-height:1.6em}
+.wins{display:flex;flex-direction:column;gap:14px}
+.win{display:grid;grid-template-columns:5.5rem 1fr;gap:14px;align-items:start}
+.win .big{font:800 1.9rem/1 var(--display);color:var(--world);font-variant-numeric:tabular-nums}
+@media (max-width:480px){.win{grid-template-columns:1fr;gap:4px}}
+.careful{background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.careful ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
+footer{font-size:.9rem;color:var(--soft);border-top:1px solid var(--line);padding-top:18px}
+a{color:var(--world)}
+@media (prefers-reduced-motion:no-preference){#mapB{transition:transform .15s ease-out}}
+</style>
+</head>
+<body>
+
+<main>
+<header>
+  <span class="kicker">The paper by Balestriero and LeCun, explained simply</span>
+  <h1>Two minds, one map</h1>
+  <p class="lede">Teach one computer only with <span class="pic">pictures</span>. Teach another only with <span class="word">words</span>. Never let them meet. This paper says that, if you teach them the right way, they end up with the <b>same picture of the world inside their heads</b>, just turned a different way round. Here is the story, one page at a time.</p>
+</header>
+
+<section>
+  <span class="chapter">Page 1 · The big guess</span>
+  <h2>Everyone is looking at the same world</h2>
+  <p>Think of two children. One only ever <span class="pic">looks at photos</span>. The other is blind and only ever <span class="word">hears stories</span>. But the photos and the stories are about the same <span class="world">real world</span>: the same cats, buses and snowstorms.</p>
+  <p>In 2024, some scientists noticed that big AI models seem to be like these two children growing up. The bigger and better they get, the more their insides look alike. They called this the <b>Platonic Representation Hypothesis</b>, after the old Greek idea that there is one true world behind everything we see. A hypothesis is a guess that hasn't been proved yet.</p>
+  <figure>
+    <svg viewBox="0 0 640 260" role="img" aria-label="The real world sends photos to one model and stories to another; both build a map in their heads">
+      <circle cx="320" cy="62" r="46" fill="none" stroke="var(--world)" stroke-width="3"/>
+      <text x="320" y="56" text-anchor="middle" font-size="26">🐱🚌</text>
+      <text x="320" y="84" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--world)">the real world</text>
+      <path d="M282 92 L150 150" stroke="var(--pic)" stroke-width="3" fill="none" marker-end="url(#ah1)"/>
+      <path d="M358 92 L490 150" stroke="var(--word)" stroke-width="3" fill="none" marker-end="url(#ah2)"/>
+      <defs>
+        <marker id="ah1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--pic)"/></marker>
+        <marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--word)"/></marker>
+      </defs>
+      <text x="190" y="112" text-anchor="end" font-size="13" style="fill:var(--pic)" font-weight="700">photos</text>
+      <text x="450" y="112" font-size="13" style="fill:var(--word)" font-weight="700">words</text>
+      <rect x="60" y="156" width="190" height="90" rx="16" fill="none" stroke="var(--pic)" stroke-width="3"/>
+      <text x="155" y="186" text-anchor="middle" font-size="15" font-weight="700">picture model</text>
+      <text x="155" y="208" text-anchor="middle" font-size="12" class="t-soft">only ever sees photos</text>
+      <text x="155" y="230" text-anchor="middle" font-size="12" class="t-soft">builds a map inside</text>
+      <rect x="390" y="156" width="190" height="90" rx="16" fill="none" stroke="var(--word)" stroke-width="3"/>
+      <text x="485" y="186" text-anchor="middle" font-size="15" font-weight="700">word model</text>
+      <text x="485" y="208" text-anchor="middle" font-size="12" class="t-soft">only ever reads text</text>
+      <text x="485" y="230" text-anchor="middle" font-size="12" class="t-soft">builds a map inside</text>
+      <text x="320" y="206" text-anchor="middle" font-size="22" style="fill:var(--world)" font-weight="700">= ?</text>
+    </svg>
+    <figcaption>The question: are the two maps really the same map?</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="chapter">Page 2 · What a "map" is</span>
+  <h2>Inside, every model keeps a map</h2>
+  <p>A model turns each thing it sees into a dot on a map. Things that are alike sit close together: the cat sits near the dog, the bus sits near the car. Scientists call the map an <i>embedding</i>. It has hundreds of directions, not two, but the idea is the same.</p>
+  <p>To check whether two maps match, you can do something simple. Pick a dot, find its 10 nearest neighbours on each map, and count how many are the same. That count, averaged over every dot, is the <b>alignment score</b>. A score of 1 means the neighbours are always identical. A score near 0 means the two maps have nothing in common.</p>
+</section>
+
+<section>
+  <span class="chapter">Page 3 · The "one rotation" part</span>
+  <h2>Same map, just turned round</h2>
+  <p>Here is the paper's main promise. The two maps come out the <b>same shape</b>, but one may be turned like a page on a table. Nothing is stretched or scrambled. One simple turn lines them up. Try it:</p>
+  <figure>
+    <svg id="maps" viewBox="0 0 640 300" role="img" aria-label="Two maps of the same things; the word map can be rotated to match the picture map">
+      <rect x="10" y="10" width="300" height="280" rx="16" fill="none" stroke="var(--pic)" stroke-width="2"/>
+      <text x="26" y="36" font-size="14" font-weight="700" style="fill:var(--pic)">picture model's map</text>
+      <g id="mapA" transform="translate(160 160)"></g>
+      <rect x="330" y="10" width="300" height="280" rx="16" fill="none" stroke="var(--word)" stroke-width="2"/>
+      <text x="346" y="36" font-size="14" font-weight="700" style="fill:var(--word)">word model's map</text>
+      <g transform="translate(480 160)"><g id="mapB"></g></g>
+    </svg>
+    <div class="slider">
+      <label for="turn">Turn the word map</label>
+      <input id="turn" type="range" min="0" max="360" value="0" step="1">
+    </div>
+    <div id="status" aria-live="polite"></div>
+    <figcaption>The word model was never shown a single photo, yet its map has the same shape. The paper proves this happens, under conditions it spells out, when the models are trained the "good" way (page 5).</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="chapter">Page 4 · How the models learn</span>
+  <h2>A guessing game called JEPA</h2>
+  <p>The models in this paper learn by playing a guessing game. Show the model one thing, then ask it to guess <b>where the matching thing will land on its map</b>. It doesn't have to redraw the picture or rewrite the sentence. It only has to point at the right spot. That is what JEPA means: Joint-Embedding Predictive Architecture, or "guess the spot on the map".</p>
+  <p>The whole paper turns on one question: <b>what counts as "the matching thing"?</b> There are two kinds of game.</p>
+</section>
+
+<section>
+  <span class="chapter">Page 5 · Good views and bad views</span>
+  <h2>Two people describing one scene, or one sentence with holes in it</h2>
+  <div class="two">
+    <div class="box goodb">
+      <b>Good views ✓</b>
+      <span>Two different looks at the same moment in the world.</span>
+      <span class="quote">"a small black and white cat laying in the mud"</span>
+      <span class="quote">"a black and white cat drinking water from a puddle"</span>
+      <span>To match these, the model must understand <b>the cat and the puddle</b>, because that is all the two sentences share.</span>
+    </div>
+    <div class="box badb">
+      <b>Bad views ✗</b>
+      <span>One sentence with parts hidden, or a photo cut into crops.</span>
+      <span class="quote">"a small black and white <span class="blank">cat</span> laying in the <span class="blank">mud</span>"</span>
+      <span>To fill the gaps, the model can lean on <b>how sentences are usually written</b>: grammar, habits, favourite words. Those things are about words, not about the world, so the photo model never learns them.</span>
+    </div>
+  </div>
+  <p>The paper proves that good views pull both models toward the <span class="world">world itself</span>, so their maps meet. Bad views let each model fill its map with habits of its own kind of data, so the maps can drift apart. It also gives a limit on how far apart they can drift.</p>
+  <p>The surprise: <b>"guess the next word", the way ChatGPT-style models learn, is a bad-view game.</b> That would explain why huge language models only partly match picture models.</p>
+</section>
+
+<section>
+  <span class="chapter">Page 6 · What they found</span>
+  <h2>Small and well-taught beats big</h2>
+  <div class="wins">
+    <div class="win"><span class="big">42×</span><p><b>Fewer examples.</b> Same model, same text. Taught with good views, it matched the picture model as well as next-word training did, after seeing 42 times fewer examples (21.6 million against 900 million).</p></div>
+    <div class="win"><span class="big">109M</span><p><b>A small word model beat giants.</b> Their text model has 109 million settings. On the 2024 paper's own test it scored 0.184 against the picture model DINOv2. Language models up to 72 billion settings, about 660 times bigger, scored at most 0.154.</p></div>
+    <div class="win"><span class="big">0.838</span><p><b>Captions with almost no matching pairs.</b> They built a captioner from three parts that were never trained on photo-and-caption pairs: two frozen picture models, and a language model trained on text alone. The only thing fitted using pairs is the one turn from page 3 that lines up the maps. It still writes sensible captions (0.838 on the CIDEr caption score, on COCO photos).</p></div>
+    <div class="win"><span class="big">86%</span><p><b>Matching with no pairs at all.</b> Using another group's method, which lines up two maps from their shapes alone, their maps let a model sort CIFAR-10 photos into 10 classes correctly 86% of the time, above every result in that group's own paper.</p></div>
+  </div>
+  <figure>
+    <svg viewBox="0 0 640 210" role="img" aria-label="Bar chart of alignment with DINOv2 on WIT-1024: CLIP text 0.124, Llama-3-70B 0.151, Qwen2.5-72B 0.154, text JEPA 109M 0.184">
+      <text x="0" y="18" font-size="13" font-weight="700">Alignment with the picture model DINOv2 (higher means more alike)</text>
+      <g font-size="13">
+        <text x="200" y="56" text-anchor="end">CLIP's text model</text>
+        <rect x="210" y="42" width="248" height="20" rx="4" fill="var(--soft)" opacity=".55"/>
+        <text x="466" y="57">0.124</text>
+        <text x="200" y="94" text-anchor="end">Llama-3, 70B</text>
+        <rect x="210" y="80" width="302" height="20" rx="4" fill="var(--soft)" opacity=".55"/>
+        <text x="520" y="95">0.151</text>
+        <text x="200" y="132" text-anchor="end">Qwen2.5, 72B</text>
+        <rect x="210" y="118" width="308" height="20" rx="4" fill="var(--soft)" opacity=".55"/>
+        <text x="526" y="133">0.154</text>
+        <text x="200" y="170" text-anchor="end" font-weight="700">Their JEPA, 109M</text>
+        <rect x="210" y="156" width="368" height="20" rx="4" fill="var(--word)"/>
+        <text x="586" y="171" font-weight="700">0.184</text>
+      </g>
+      <line x1="210" y1="34" x2="210" y2="184" stroke="var(--line)"/>
+      <text x="210" y="202" font-size="11" class="t-soft">0</text>
+      <text x="610" y="202" font-size="11" class="t-soft" text-anchor="end">0.2</text>
+    </svg>
+    <figcaption>The scores as the authors report them. Bars drawn to scale from 0 to 0.2. A score of 0.184 means that, of each item's 10 nearest neighbours, about 2 are the same on both maps. That is far above chance, but still a long way from identical.</figcaption>
+  </figure>
+</section>
+
+<section class="careful">
+  <span class="chapter">Page 7 · Read the small print</span>
+  <h2>What this does not mean</h2>
+  <ul>
+    <li><b>"Proving" has conditions.</b> The maths holds when its assumptions hold, for example that the training pairs really are two looks at the same moment. Real data is messier, which is why the measured scores are well below 1.</li>
+    <li><b>Mostly checked by the authors.</b> Every number above comes from their own runs: 345 training runs, about 5,500 hours of computer time on big graphics cards. They released the code and results so others can check them. That is what our study is for.</li>
+    <li><b>Good views need help from the world.</b> Two captions of one photo is a pairing that came from photos. The word model never sees the picture, but somebody had to know the two sentences described the same scene.</li>
+  </ul>
+</section>
+
+<section>
+  <span class="chapter">The end · What we will do</span>
+  <h2>Our part: check it on a laptop</h2>
+  <p>We can't redo 5,500 hours of big-computer training. We can run their own tests, rebuild their headline numbers from the files they shared, and measure the language-model scores on page 6 ourselves. If those hold, we can try a tiny version of the page-5 experiment overnight on a Mac: good views against bad views.</p>
+</section>
+
+<footer>Based on <a href="https://github.com/galilai-group/prh-proof">Balestriero and LeCun, "Proving and Improving the Platonic Representation Hypothesis with JEPAs"</a> (2026) and Huh, Cheung, Wang and Isola, "The Platonic Representation Hypothesis" (2024). The map, slider and drawings are simplified pictures of the idea, not the paper's data. The chart on page 6 shows the paper's reported scores.</footer>
+</main>
+
+<script>
+(function(){
+  const items=[["🐱",-70,-60],["🐶",-40,-80],["🐦",-90,-20],["🚌",60,40],["🚗",90,10],["🚲",40,80],["🌧️",-20,70],["❄️",10,95],["🍎",80,-70],["🍌",50,-95]];
+  const NS="http://www.w3.org/2000/svg";
+  function draw(g){items.forEach(([e,x,y])=>{const t=document.createElementNS(NS,"text");t.setAttribute("x",x);t.setAttribute("y",y);t.setAttribute("text-anchor","middle");t.setAttribute("dominant-baseline","central");t.setAttribute("font-size","24");t.textContent=e;g.appendChild(t);});}
+  const A=document.getElementById("mapA"),B=document.getElementById("mapB");draw(A);draw(B);
+  const OFF=137; // the word map starts turned by this much
+  const s=document.getElementById("turn"),st=document.getElementById("status");
+  function upd(){const a=(OFF+Number(s.value))%360;B.setAttribute("transform","rotate("+a+")");
+    B.querySelectorAll("text").forEach(t=>{const x=t.getAttribute("x"),y=t.getAttribute("y");t.setAttribute("transform","rotate("+(-a)+" "+x+" "+y+")");});
+    const off=Math.min(a,360-a);
+    st.textContent= off<4 ? "Lined up. Same map, just turned. Every neighbour now matches." : off<25 ? "Nearly there…" : "Turned "+Math.round(off)+"° away. The shape is the same; keep turning.";
+    st.style.color= off<4 ? "var(--good)" : "var(--soft)";}
+  s.addEventListener("input",upd);upd();
+})();
+</script>
+</body>
+</html>
