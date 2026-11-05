@@ -1,0 +1,5 @@
+results/features/
+results/raw/
+__pycache__/
+.venv/
+*.npy
