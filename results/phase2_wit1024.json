@@ -1,0 +1,249 @@
+{
+  "benchmark": "WIT-1024",
+  "reference": "dinov2",
+  "k": 10,
+  "tolerance": 0.01,
+  "machine": "macOS-27.0.1-arm64-arm-64bit",
+  "rows": {
+    "bert": {
+      "n_layers_vision": 12,
+      "n_layers_text": 13,
+      "mutual_knn": 0.111426,
+      "mutual_knn_3dp": 0.111,
+      "best_layers_mknn": [
+        10,
+        11
+      ],
+      "mutual_knn_ci95_bootstrap": [
+        0.1033,
+        0.1201
+      ],
+      "mutual_knn_ci95_subsample": [
+        0.0971,
+        0.1258
+      ],
+      "unbiased_cka": 0.291583,
+      "unbiased_cka_3dp": 0.292,
+      "best_layers_cka": [
+        9,
+        11
+      ],
+      "last_layer_mutual_knn": 0.102148,
+      "unclipped_max_mutual_knn": 0.1,
+      "shuffled": 0.008887,
+      "vendor_mutual_knn": 0.111426,
+      "vendor_unbiased_cka": 0.291583,
+      "vendor_best_layers_mknn": [
+        10,
+        11
+      ],
+      "abs_diff_vs_vendor_mknn": 1e-08,
+      "abs_diff_vs_vendor_cka": 0.0,
+      "paper_reported_mknn": 0.111,
+      "paper_reported_cka": 0.292,
+      "diff_vs_paper_mknn": 0.0004,
+      "diff_vs_paper_cka": -0.0004,
+      "reproduced_within_0_01": true
+    },
+    "clip": {
+      "n_layers_vision": 12,
+      "n_layers_text": 13,
+      "mutual_knn": 0.124219,
+      "mutual_knn_3dp": 0.124,
+      "best_layers_mknn": [
+        10,
+        10
+      ],
+      "mutual_knn_ci95_bootstrap": [
+        0.1156,
+        0.1333
+      ],
+      "mutual_knn_ci95_subsample": [
+        0.1086,
+        0.1398
+      ],
+      "unbiased_cka": 0.33928,
+      "unbiased_cka_3dp": 0.339,
+      "best_layers_cka": [
+        9,
+        11
+      ],
+      "last_layer_mutual_knn": 0.091406,
+      "unclipped_max_mutual_knn": 0.09082,
+      "shuffled": 0.008887,
+      "vendor_mutual_knn": 0.124219,
+      "vendor_unbiased_cka": 0.33928,
+      "vendor_best_layers_mknn": [
+        10,
+        10
+      ],
+      "abs_diff_vs_vendor_mknn": 0.0,
+      "abs_diff_vs_vendor_cka": 1e-08,
+      "paper_reported_mknn": 0.124,
+      "paper_reported_cka": 0.339,
+      "diff_vs_paper_mknn": 0.0002,
+      "diff_vs_paper_cka": 0.0003,
+      "reproduced_within_0_01": true
+    },
+    "mpnet": {
+      "n_layers_vision": 12,
+      "n_layers_text": 13,
+      "mutual_knn": 0.118262,
+      "mutual_knn_3dp": 0.118,
+      "best_layers_mknn": [
+        10,
+        12
+      ],
+      "mutual_knn_ci95_bootstrap": [
+        0.11,
+        0.1264
+      ],
+      "mutual_knn_ci95_subsample": [
+        0.1042,
+        0.1323
+      ],
+      "unbiased_cka": 0.389872,
+      "unbiased_cka_3dp": 0.39,
+      "best_layers_cka": [
+        9,
+        12
+      ],
+      "last_layer_mutual_knn": 0.115527,
+      "unclipped_max_mutual_knn": 0.115625,
+      "shuffled": 0.00918,
+      "vendor_mutual_knn": 0.118262,
+      "vendor_unbiased_cka": 0.389872,
+      "vendor_best_layers_mknn": [
+        10,
+        12
+      ],
+      "abs_diff_vs_vendor_mknn": 0.0,
+      "abs_diff_vs_vendor_cka": 0.0,
+      "paper_reported_mknn": 0.118,
+      "paper_reported_cka": 0.39,
+      "diff_vs_paper_mknn": 0.0003,
+      "diff_vs_paper_cka": -0.0001,
+      "reproduced_within_0_01": true
+    },
+    "qwen0.5b": {
+      "n_layers_vision": 12,
+      "n_layers_text": 25,
+      "mutual_knn": 0.102148,
+      "mutual_knn_3dp": 0.102,
+      "best_layers_mknn": [
+        10,
+        22
+      ],
+      "mutual_knn_ci95_bootstrap": [
+        0.0947,
+        0.1107
+      ],
+      "mutual_knn_ci95_subsample": [
+        0.0881,
+        0.1162
+      ],
+      "unbiased_cka": 0.317751,
+      "unbiased_cka_3dp": 0.318,
+      "best_layers_cka": [
+        9,
+        24
+      ],
+      "last_layer_mutual_knn": 0.0875,
+      "unclipped_max_mutual_knn": 0.084473,
+      "shuffled": 0.009473,
+      "vendor_mutual_knn": 0.102148,
+      "vendor_unbiased_cka": 0.317751,
+      "vendor_best_layers_mknn": [
+        10,
+        22
+      ],
+      "abs_diff_vs_vendor_mknn": 1e-08,
+      "abs_diff_vs_vendor_cka": 0.0,
+      "paper_reported_mknn": 0.102,
+      "paper_reported_cka": 0.318,
+      "diff_vs_paper_mknn": 0.0001,
+      "diff_vs_paper_cka": -0.0002,
+      "reproduced_within_0_01": true
+    },
+    "qwen1.5b": {
+      "n_layers_vision": 12,
+      "n_layers_text": 29,
+      "mutual_knn": 0.107715,
+      "mutual_knn_3dp": 0.108,
+      "best_layers_mknn": [
+        10,
+        27
+      ],
+      "mutual_knn_ci95_bootstrap": [
+        0.0999,
+        0.1162
+      ],
+      "mutual_knn_ci95_subsample": [
+        0.0937,
+        0.1217
+      ],
+      "unbiased_cka": 0.324306,
+      "unbiased_cka_3dp": 0.324,
+      "best_layers_cka": [
+        9,
+        27
+      ],
+      "last_layer_mutual_knn": 0.105078,
+      "unclipped_max_mutual_knn": 0.087305,
+      "shuffled": 0.009277,
+      "vendor_mutual_knn": 0.107813,
+      "vendor_unbiased_cka": 0.324306,
+      "vendor_best_layers_mknn": [
+        10,
+        27
+      ],
+      "abs_diff_vs_vendor_mknn": 9.766e-05,
+      "abs_diff_vs_vendor_cka": 0.0,
+      "paper_reported_mknn": 0.108,
+      "paper_reported_cka": 0.324,
+      "diff_vs_paper_mknn": -0.0003,
+      "diff_vs_paper_cka": 0.0003,
+      "reproduced_within_0_01": true
+    },
+    "qwen3b": {
+      "n_layers_vision": 12,
+      "n_layers_text": 37,
+      "mutual_knn": 0.126172,
+      "mutual_knn_3dp": 0.126,
+      "best_layers_mknn": [
+        10,
+        32
+      ],
+      "mutual_knn_ci95_bootstrap": [
+        0.117,
+        0.1353
+      ],
+      "mutual_knn_ci95_subsample": [
+        0.11,
+        0.1423
+      ],
+      "unbiased_cka": 0.363353,
+      "unbiased_cka_3dp": 0.363,
+      "best_layers_cka": [
+        9,
+        31
+      ],
+      "last_layer_mutual_knn": 0.10625,
+      "unclipped_max_mutual_knn": 0.082031,
+      "shuffled": 0.009668,
+      "vendor_mutual_knn": 0.126172,
+      "vendor_unbiased_cka": 0.363353,
+      "vendor_best_layers_mknn": [
+        10,
+        32
+      ],
+      "abs_diff_vs_vendor_mknn": 0.0,
+      "abs_diff_vs_vendor_cka": 0.0,
+      "paper_reported_mknn": 0.125,
+      "paper_reported_cka": 0.363,
+      "diff_vs_paper_mknn": 0.0012,
+      "diff_vs_paper_cka": 0.0004,
+      "reproduced_within_0_01": true
+    }
+  }
+}

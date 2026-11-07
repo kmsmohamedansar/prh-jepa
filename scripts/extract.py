@@ -6,8 +6,12 @@ Follows the PRH benchmark protocol (Huh et al. 2024; Balestriero and LeCun 2026)
 - Text encoders: first caption of each WIT-1024 pair, tokenized up to 512
   tokens (77 for CLIP), attention-masked mean of every hidden state.
 """
-import argparse, json, pathlib, platform, time
+import argparse, gc, json, pathlib, platform, resource, shutil, time, warnings
 import numpy as np
+from PIL import Image
+
+# WIT-1024 includes a 100.5-megapixel Wikimedia image; silence PIL's warning and decode one chunk at a time.
+warnings.simplefilter("ignore", Image.DecompressionBombWarning)
 
 IMAGE_MODELS = {
     "dinov2": "vit_base_patch14_dinov2.lvd142m",
@@ -37,7 +41,7 @@ def _masked_mean(hidden, mask):
     return (hidden.float() * m).sum(1) / m.sum(1).clamp(min=1e-9)
 
 
-def extract_vision(model_key, images, device, batch_size):
+def extract_vision(model_key, img_ds, device, batch_size):
     import timm, torch
 
     name = IMAGE_MODELS[model_key]
@@ -48,14 +52,32 @@ def extract_vision(model_key, images, device, batch_size):
     pool = (lambda o: o[:, 0]) if getattr(net, "num_prefix_tokens", 1) else (lambda o: o.mean(1))
     feats = []
     hooks = [blk.register_forward_hook(lambda m, inp, out: feats.append(pool(out).float().cpu())) for blk in net.blocks]
+    n_total = len(img_ds)
     with torch.no_grad():
-        for chunk in _batches(list(images), batch_size):
-            x = torch.stack([tf(im.convert("RGB")) for im in chunk]).to(device, torch.float32)
+        for i in range(0, n_total, batch_size):
+            chunk = img_ds[i : min(i + batch_size, n_total)]["image"]
+            tensors = []
+            for im in chunk:
+                rgb = im.convert("RGB")
+                tensors.append(tf(rgb))
+                rgb.close()
+                im.close()
+            del chunk
+            x = torch.stack(tensors).to(device, torch.float32)
+            del tensors
             net(x)
+            del x
+            if device == "mps":
+                torch.mps.empty_cache()
+            gc.collect()
     for h in hooks:
         h.remove()
     n_blocks = len(net.blocks)
     layers = [torch.cat(feats[i::n_blocks]).numpy().astype(np.float32) for i in range(n_blocks)]
+    del net, feats
+    if device == "mps":
+        torch.mps.empty_cache()
+    gc.collect()
     return layers, "float32"
 
 
@@ -69,7 +91,7 @@ def extract_text(model_key, texts, device, batch_size):
     tok = AutoTokenizer.from_pretrained(name)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    net = AutoModel.from_pretrained(name, dtype=dtype).eval().to(device)
+    net = AutoModel.from_pretrained(name, dtype=dtype, low_cpu_mem_usage=True).eval().to(device)
     max_len = 77 if model_key == "clip" else 512
     chunk_layers = []
     with torch.no_grad():
@@ -81,15 +103,23 @@ def extract_text(model_key, texts, device, batch_size):
                 hs = net(**enc, output_hidden_states=True).hidden_states
             mask = enc["attention_mask"]
             chunk_layers.append([_masked_mean(h, mask).cpu().numpy().astype(np.float32) for h in hs])
+            del hs, enc, mask
+            if device == "mps":
+                torch.mps.empty_cache()
     layers = [np.concatenate([c[i] for c in chunk_layers], axis=0) for i in range(len(chunk_layers[0]))]
+    del net, chunk_layers
+    if device == "mps":
+        torch.mps.empty_cache()
+    gc.collect()
     return layers, "bfloat16" if use_bf16 else "float32"
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--model", choices=list(ALL_MODELS), required=True)
-    p.add_argument("--batch-size", type=int, default=32)
+    p.add_argument("--batch-size", type=int, default=None, help="batch size (default: 8 for image, 16 for text)")
     p.add_argument("--device", default=None, help="mps or cpu (default: mps if available)")
+    p.add_argument("--cleanup-cache", action="store_true", help="delete model weights from HF cache after saving features")
     p.add_argument("--overwrite", action="store_true")
     args = p.parse_args()
 
@@ -105,16 +135,31 @@ def main():
     import datasets, timm, torch, transformers
 
     device = args.device or ("mps" if torch.backends.mps.is_available() else "cpu")
-    t0 = time.time()
+    batch_size = args.batch_size or (8 if args.model in IMAGE_MODELS else 16)
+    t0 = time.perf_counter()
     ds = datasets.load_dataset("minhuh/prh", revision="wit_1024", split="train")
     if args.model in IMAGE_MODELS:
-        layers, dtype_str = extract_vision(args.model, ds["image"], device, args.batch_size)
+        layers, dtype_str = extract_vision(args.model, ds.select_columns(["image"]), device, batch_size)
     else:
-        texts = [t[0] for t in ds["text"]]
-        layers, dtype_str = extract_text(args.model, texts, device, args.batch_size)
-    elapsed = round(time.time() - t0, 2)
+        texts = [t[0] for t in ds.select_columns(["text"])["text"]]
+        layers, dtype_str = extract_text(args.model, texts, device, batch_size)
+    elapsed = round(time.perf_counter() - t0, 2)
+    peak_rss_mb = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (1024 * 1024), 1)
 
-    np.savez(out_path, **{f"layer_{i}": arr for i, arr in enumerate(layers)})
+    np.savez_compressed(out_path, **{f"layer_{i}": arr for i, arr in enumerate(layers)})
+    cleaned_bytes = 0
+    if args.cleanup_cache:
+        from huggingface_hub import scan_cache_dir
+
+        ckpt = ALL_MODELS[args.model]
+        targets = {ckpt, f"timm/{ckpt}"}
+        info = scan_cache_dir()
+        revs = [rev.commit_hash for r in info.repos if r.repo_id in targets for rev in r.revisions]
+        if revs:
+            strat = info.delete_revisions(*revs)
+            cleaned_bytes = int(strat.expected_freed_size)
+            strat.execute()
+
     meta = {
         "benchmark": "WIT-1024 (minhuh/prh, revision wit_1024, split train)",
         "model_key": args.model,
@@ -122,11 +167,13 @@ def main():
         "modality": "image" if args.model in IMAGE_MODELS else "text",
         "device": device,
         "dtype": dtype_str,
-        "batch_size": args.batch_size,
+        "batch_size": batch_size,
         "n_items": int(layers[0].shape[0]),
         "n_layers": len(layers),
         "dim": int(layers[0].shape[1]),
         "seconds": elapsed,
+        "peak_rss_mb": peak_rss_mb,
+        "cleaned_cache_mb": round(cleaned_bytes / (1024 * 1024), 1),
         "machine": platform.platform(),
         "processor": platform.processor(),
         "versions": {

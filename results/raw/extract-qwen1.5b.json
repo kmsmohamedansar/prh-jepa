@@ -1,0 +1,25 @@
+{
+  "benchmark": "WIT-1024 (minhuh/prh, revision wit_1024, split train)",
+  "model_key": "qwen1.5b",
+  "checkpoint": "Qwen/Qwen2.5-1.5B",
+  "modality": "text",
+  "device": "mps",
+  "dtype": "float32",
+  "batch_size": 8,
+  "n_items": 1024,
+  "n_layers": 29,
+  "dim": 1536,
+  "seconds": 1030.14,
+  "peak_rss_mb": 3790.8,
+  "cleaned_cache_mb": 2955.4,
+  "machine": "macOS-27.0.1-arm64-arm-64bit",
+  "processor": "arm",
+  "versions": {
+    "python": "3.12.15",
+    "torch": "2.15.0",
+    "transformers": "5.22.1",
+    "timm": "1.0.31",
+    "datasets": "5.1.0",
+    "numpy": "2.5.4"
+  }
+}

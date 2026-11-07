@@ -1,0 +1,25 @@
+{
+  "benchmark": "WIT-1024 (minhuh/prh, revision wit_1024, split train)",
+  "model_key": "clip",
+  "checkpoint": "openai/clip-vit-base-patch32",
+  "modality": "text",
+  "device": "mps",
+  "dtype": "float32",
+  "batch_size": 16,
+  "n_items": 1024,
+  "n_layers": 13,
+  "dim": 512,
+  "seconds": 186.98,
+  "peak_rss_mb": 1586.3,
+  "cleaned_cache_mb": 580.7,
+  "machine": "macOS-27.0.1-arm64-arm-64bit",
+  "processor": "arm",
+  "versions": {
+    "python": "3.12.15",
+    "torch": "2.15.0",
+    "transformers": "5.22.1",
+    "timm": "1.0.31",
+    "datasets": "5.1.0",
+    "numpy": "2.5.4"
+  }
+}

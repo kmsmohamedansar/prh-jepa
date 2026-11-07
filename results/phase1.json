@@ -1,0 +1,180 @@
+{
+  "vendor_repo": "galilai-group/prh-proof",
+  "vendor_commit": "a2b9949fa907d4fbe562742d4b1ffa7205ab7427",
+  "machine": "macOS-27.0.1-arm64-arm-64bit",
+  "pytest_suite": {
+    "total_collected": 139,
+    "not_slow_passed": 133,
+    "not_slow_skipped": 3,
+    "not_slow_failed": 1,
+    "not_slow_seconds": 51.8,
+    "slow_passed": 2,
+    "slow_seconds": 81.99,
+    "skipped_reasons": [
+      "tests/test_benchmarks.py::test_msrvtt_extract_frames_decodes_Real_mp4 (optional decord not installed)",
+      "tests/test_captioner.py::test_coco_metrics_smoke (optional pycocoevalcap not installed)",
+      "tests/test_pairfree.py::test_run_pairfree_dispatches_ot (optional unpaired_rosetta not installed)"
+    ],
+    "failure_detail": "tests/test_metrics.py::test_unbiased_cka_matches_the_u_statistic_and_its_invariances fails under pytest 9.2.0 with TypeError: iteration over a 0-d tensor because pytest.approx(reference) iterates over expected in _contains_decimal; casting float(reference) matches unbiased_cka(a, b) to <1e-16."
+  },
+  "runs_csv": {
+    "total_rows": 345,
+    "states": {
+      "completed": 321,
+      "cancelled": 18,
+      "failed": 6
+    },
+    "unique_tags": 345
+  },
+  "headline_numbers": {
+    "sample_efficiency_42x": {
+      "good_2_16m_wit_seeds": [
+        0.107,
+        0.113,
+        0.104
+      ],
+      "good_2_16m_wit_mean": 0.108,
+      "ntp_940m_wit_seeds": [
+        0.111,
+        0.112,
+        0.109
+      ],
+      "ntp_940m_wit_mean": 0.1107,
+      "samples_good": 21600000.0,
+      "samples_ntp": 900000000.0,
+      "sample_ratio": 41.67,
+      "tokens_good": 2773440000,
+      "tokens_ntp": 38520000000,
+      "token_ratio": 13.89,
+      "note": "Sample ratio is 41.67x (900M / 21.6M). Because good-view JEPA reads 3 captions per sample (128.4 vs 42.8 tokens), the token ratio is 13.89x."
+    },
+    "wit1024_dinov2_b_headline": {
+      "jepa_109m_seeds": [
+        0.191,
+        0.179,
+        0.181
+      ],
+      "jepa_109m_mean": 0.1837,
+      "jepa_109m_mean_3dp": 0.184,
+      "llm_baselines": {
+        "Qwen2.5-0.5B": 0.102,
+        "Qwen2.5-1.5B": 0.108,
+        "Qwen2.5-3B": 0.125,
+        "Qwen2.5-7B": 0.118,
+        "Qwen2.5-14B": 0.13,
+        "Qwen2.5-32B": 0.128,
+        "Qwen2.5-72B": 0.154,
+        "Mistral-7B": 0.14,
+        "Llama-3-8B": 0.145,
+        "Llama-3-70B": 0.151
+      },
+      "clip_text": 0.124,
+      "note": "Three-seed mean is 0.1837 (reported as .184). The fourth high-SIGReg seed (.121) is noted in README text and scored against CLIP in vision_families.csv (.145/.150/.157), not listed in scaling.csv."
+    },
+    "wit1024_clip_vit_h": {
+      "jepa_109m_seeds": [
+        0.233,
+        0.23,
+        0.227
+      ],
+      "jepa_109m_mean": 0.23,
+      "qwen2_5_72b": 0.21,
+      "llama3_70b": 0.206
+    },
+    "coco5k_dinov2_b": {
+      "jepa_109m_seeds": [
+        0.169,
+        0.159,
+        0.156
+      ],
+      "jepa_109m_mean": 0.1613,
+      "jepa_109m_mean_3dp": 0.161,
+      "baselines": {
+        "llama3-70b": 0.113,
+        "qwen72b": 0.108,
+        "clip": 0.132,
+        "mpnet": 0.156
+      }
+    },
+    "scaling_law": {
+      "v1_heldout_runs": 96,
+      "v1_heldout_rmse": 0.0129,
+      "v2_random_runs": 85,
+      "v2_random_rmse": 0.0093,
+      "v2_all_heldout_runs": 88,
+      "v2_all_heldout_rmse": 0.0109,
+      "seed_noise_rmse": 0.0096,
+      "note": "README reports .0093 on the 85 random design runs (v2_random_rmse = 0.0093) and .0096 pairwise seed noise (seed_noise_rmse = 0.0096). Including the 3 320M-sample long extrapolation runs (88 held-out runs total, as tables.py prints) gives RMSE 0.0109."
+    },
+    "pairfree_coco2014": {
+      "runs": 15,
+      "cifar10_mean_pct": 86.03,
+      "cifar100_mean_pct": 67.21,
+      "imagenet100_mean_pct": 64.42,
+      "foscttm_mean": 0.0178
+    },
+    "captioner": {
+      "msrvtt_cider_rotation": 0.2457,
+      "msrvtt_cider_captioner_map": 0.2682,
+      "coco_cider_838_in_csv": false,
+      "note": "MSR-VTT CIDEr .246 (0.2457) is in video.csv. COCO CIDEr .838 (tab:captioner_scale) is marked 'typed' in docs/reproduce.md and has no CSV in paper/data/."
+    }
+  },
+  "metrics_crosscheck": {
+    "n_cases": 4,
+    "max_abs_diff_mutual_knn": 5.304813366358019e-09,
+    "max_abs_diff_unbiased_cka": 2.7755575615628914e-17,
+    "max_abs_diff_prh_score_mknn": 1.4901161207725444e-09,
+    "max_abs_diff_prh_score_cka": 6.105974198478137e-09,
+    "all_layers_match": true,
+    "rotation_invariance_check_n1024_d64": {
+      "raw_mutual_knn": 1.0,
+      "raw_unbiased_cka": 1.0,
+      "prh_score_mknn_after_quantile_clip": 0.7746,
+      "prh_score_cka_after_quantile_clip": 0.9794,
+      "note": "Elementwise 0.95-quantile clipping in _prh_prep is coordinate-axis dependent and reduces mutual 10-NN on an orthogonal rotation of N=1024, d=64 Gaussian features from 1.0000 to 0.7746 (and unbiased CKA from 1.0000 to 0.9794)."
+    },
+    "cases": [
+      {
+        "case": 0,
+        "n": 200,
+        "outlier": false,
+        "abs_diff_mutual_knn": 5.304813366358019e-09,
+        "abs_diff_unbiased_cka": 0.0,
+        "abs_diff_prh_score_mknn": 2.3841856267026174e-10,
+        "abs_diff_prh_score_cka": 3.290287292623262e-09,
+        "layers_match": true
+      },
+      {
+        "case": 1,
+        "n": 256,
+        "outlier": false,
+        "abs_diff_mutual_knn": 4.4703483415009515e-09,
+        "abs_diff_unbiased_cka": 2.7755575615628914e-17,
+        "abs_diff_prh_score_mknn": 1.4901161138336505e-09,
+        "abs_diff_prh_score_cka": 4.1993758470582065e-09,
+        "layers_match": true
+      },
+      {
+        "case": 2,
+        "n": 512,
+        "outlier": true,
+        "abs_diff_mutual_knn": 3.7252903539730653e-10,
+        "abs_diff_unbiased_cka": 8.673617379884035e-19,
+        "abs_diff_prh_score_mknn": 0.0,
+        "abs_diff_prh_score_cka": 6.105974198478137e-09,
+        "layers_match": true
+      },
+      {
+        "case": 3,
+        "n": 1024,
+        "outlier": true,
+        "abs_diff_mutual_knn": 1.1175870888446848e-09,
+        "abs_diff_unbiased_cka": 0.0,
+        "abs_diff_prh_score_mknn": 1.4901161207725444e-09,
+        "abs_diff_prh_score_cka": 1.3896490902443048e-10,
+        "layers_match": true
+      }
+    ]
+  }
+}

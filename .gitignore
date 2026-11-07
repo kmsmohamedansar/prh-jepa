@@ -1,5 +1,4 @@
 results/features/
-results/raw/
 vendor/prh-proof/
 __pycache__/
 .venv/

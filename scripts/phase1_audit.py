@@ -93,9 +93,17 @@ def audit_headline_numbers():
     ok_v2 = ~np.isnan(pred_v2)
     rmse_v2_heldout = float(np.sqrt(np.mean((held_v2["r1"].to_numpy()[ok_v2] - pred_v2[ok_v2]) ** 2)))
 
-    # Seed noise across multi-seed grid cells (comparing seed 1 and 2 against seed 0)
+    rand_v2 = cells_s0[cells_s0["design"] == "random"]
+    pred_rand_v2 = np.array([reg.get(("v2", r.samples_M, r.q), np.nan) for r in rand_v2.itertuples()])
+    rmse_v2_random_85 = float(np.sqrt(np.mean((rand_v2["r1"].to_numpy() - pred_rand_v2) ** 2)))
+
+    # Seed noise across multi-seed grid cells (all 18 pairwise seed differences across 6 3-seed cells)
     multi = phase_grid.pivot_table(index=["files", "samples_M", "q"], columns="seed", values="r1").dropna()
-    seed_diffs = np.concatenate([(multi[1] - multi[0]).to_numpy(), (multi[2] - multi[0]).to_numpy()])
+    seed_diffs = np.concatenate([
+        (multi[0] - multi[1]).to_numpy(),
+        (multi[0] - multi[2]).to_numpy(),
+        (multi[1] - multi[2]).to_numpy(),
+    ])
     seed_rmse = float(np.sqrt(np.mean(seed_diffs**2)))
 
     # 6. Pair-free alignment on COCO 2014
@@ -144,9 +152,12 @@ def audit_headline_numbers():
         "scaling_law": {
             "v1_heldout_runs": int(ok_v1.sum()),
             "v1_heldout_rmse": round(rmse_v1_heldout, 4),
-            "v2_heldout_runs": int(ok_v2.sum()),
-            "v2_heldout_rmse": round(rmse_v2_heldout, 4),
+            "v2_random_runs": int(len(rand_v2)),
+            "v2_random_rmse": round(rmse_v2_random_85, 4),
+            "v2_all_heldout_runs": int(ok_v2.sum()),
+            "v2_all_heldout_rmse": round(rmse_v2_heldout, 4),
             "seed_noise_rmse": round(seed_rmse, 4),
+            "note": "README reports .0093 on the 85 random design runs (v2_random_rmse = 0.0093) and .0096 pairwise seed noise (seed_noise_rmse = 0.0096). Including the 3 320M-sample long extrapolation runs (88 held-out runs total, as tables.py prints) gives RMSE 0.0109.",
         },
         "pairfree_coco2014": {
             "runs": int(pf_row["runs"]),
@@ -211,6 +222,16 @@ def cross_check_metrics():
             "layers_match": (oi, oj) == (int(ti), int(tj)),
         })
 
+    # Rotation sensitivity check of prh_prep (elementwise 0.95 quantile clipping)
+    rng_rot = np.random.default_rng(0)
+    a_rot = rng_rot.normal(size=(1024, 64)).astype(np.float32)
+    q_rot, _ = np.linalg.qr(rng_rot.normal(size=(64, 64)))
+    b_rot = (a_rot @ q_rot).astype(np.float32)
+    raw_mknn_rot = our_metrics.mutual_knn(a_rot, b_rot, k=10)
+    raw_ucka_rot = our_metrics.unbiased_cka(a_rot, b_rot)
+    prh_mknn_rot, _, _ = our_metrics.prh_score([a_rot], [b_rot], k=10, metric="mknn")
+    prh_cka_rot, _, _ = our_metrics.prh_score([a_rot], [b_rot], k=10, metric="cka")
+
     return {
         "n_cases": len(cases),
         "max_abs_diff_mutual_knn": float(max(c["abs_diff_mutual_knn"] for c in cases)),
@@ -218,6 +239,13 @@ def cross_check_metrics():
         "max_abs_diff_prh_score_mknn": float(max(c["abs_diff_prh_score_mknn"] for c in cases)),
         "max_abs_diff_prh_score_cka": float(max(c["abs_diff_prh_score_cka"] for c in cases)),
         "all_layers_match": all(c["layers_match"] for c in cases),
+        "rotation_invariance_check_n1024_d64": {
+            "raw_mutual_knn": round(float(raw_mknn_rot), 4),
+            "raw_unbiased_cka": round(float(raw_ucka_rot), 4),
+            "prh_score_mknn_after_quantile_clip": round(float(prh_mknn_rot), 4),
+            "prh_score_cka_after_quantile_clip": round(float(prh_cka_rot), 4),
+            "note": "Elementwise 0.95-quantile clipping in _prh_prep is coordinate-axis dependent and reduces mutual 10-NN on an orthogonal rotation of N=1024, d=64 Gaussian features from 1.0000 to 0.7746 (and unbiased CKA from 1.0000 to 0.9794).",
+        },
         "cases": cases,
     }
 
@@ -227,6 +255,25 @@ def main():
         "vendor_repo": "galilai-group/prh-proof",
         "vendor_commit": "a2b9949fa907d4fbe562742d4b1ffa7205ab7427",
         "machine": platform.platform(),
+        "pytest_suite": {
+            "total_collected": 139,
+            "not_slow_passed": 133,
+            "not_slow_skipped": 3,
+            "not_slow_failed": 1,
+            "not_slow_seconds": 51.80,
+            "slow_passed": 2,
+            "slow_seconds": 81.99,
+            "skipped_reasons": [
+                "tests/test_benchmarks.py::test_msrvtt_extract_frames_decodes_Real_mp4 (optional decord not installed)",
+                "tests/test_captioner.py::test_coco_metrics_smoke (optional pycocoevalcap not installed)",
+                "tests/test_pairfree.py::test_run_pairfree_dispatches_ot (optional unpaired_rosetta not installed)",
+            ],
+            "failure_detail": (
+                "tests/test_metrics.py::test_unbiased_cka_matches_the_u_statistic_and_its_invariances fails under "
+                "pytest 9.2.0 with TypeError: iteration over a 0-d tensor because pytest.approx(reference) iterates "
+                "over expected in _contains_decimal; casting float(reference) matches unbiased_cka(a, b) to <1e-16."
+            ),
+        },
         "runs_csv": audit_runs_csv(),
         "headline_numbers": audit_headline_numbers(),
         "metrics_crosscheck": cross_check_metrics(),
