@@ -13,6 +13,8 @@ With no independent replication published yet, this study asks four questions on
 
 **Status (2026-11-06):** all three phases are complete, scored and documented (`paper/report.md`, `paper/claims.md`, `paper/numbers.json`).
 
+[Read the report](https://ansarbuilds.dev/p/prh-jepa/report.html) · [Download the PDF](https://ansarbuilds.dev/p/prh-jepa/report.pdf) · [Citation](CITATION.cff)
+
 New to the paper? Start with `docs/explainer.html` for a plain-words illustrated walkthrough, then read `paper/report.md` for our findings.
 
 ## What was found, in one paragraph
