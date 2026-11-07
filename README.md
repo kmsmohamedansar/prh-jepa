@@ -25,6 +25,7 @@ The upstream codebase held up cleanly: 135 of 139 tests passed on CPU (3 skipped
 
 | File | What it is |
 |---|---|
+| `CASE_STUDY.md` | Two-chapter short version with the summary table and claims ledger |
 | `paper/report.md` | The full technical report |
 | `paper/claims.md` | All 24 numbered claims (`C1` to `C24`), the numbers behind them, and what this study does not claim |
 | `docs/explainer.html` | The paper explained simply, with drawings (authors' reported numbers) |
