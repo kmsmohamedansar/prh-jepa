@@ -58,3 +58,12 @@ Dated log of what was done, what broke and what was measured.
 
 - Wrote `scripts/report_numbers.py` (`paper/numbers.json`) and `scripts/make_figures.py` (`paper/figures/fig1-study-design.svg` through `fig4-good-vs-bad-views.svg`).
 - Completed `paper/claims.md` (24 claims, `C1` to `C24`), `paper/report.md` and `README.md`. Verified unit tests pass and `docs/analysis-plan.md` remains unchanged since commit `44f154d`.
+
+## 2026-11-07
+
+### Report corrections after a re-read
+
+- **Scale comparison was wrong.** The report called `21.6M` samples x 8 views the paper's smallest WIT run (`1 / 844`) and said the smallest grid runs used `2M` samples with `BERT-T`. Checking `paper/data/phase_grid.csv` and `docs/reproduce.md` upstream: the smallest grid runs are `BERT-S` at `3M` samples (WIT-1024 `0.041` to `0.051`). My `51,200` scenes are about `1 / 59` of that. `1 / 844` is kept only as the ratio to the `21.6M`-sample run behind the "42x" headline.
+- **3 captions vs 8 views.** Upstream `train.py` defaults to 2 global and 6 local views per sample; `tables.py` counts tokens as the 3 captions per image the views are cut from (`128.4` vs `42.8`). Both counts hold; the report now says how they relate.
+- Added a limit: good and bad views differ in length and masking as well as source, so the Phase 3 CKA gap is a direction, not a settled effect.
+- Framed the clip effect one way (the clip accounts for 35% of `Qwen2.5-3B`'s score), switched first-person "we" to "I" for my own work, and removed third-person "user"/"owner" phrasing. No measured number changed.
